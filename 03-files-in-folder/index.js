@@ -2,8 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const pathToSecretFolder = path.join(__dirname, 'secret-folder');
-//2.Read the contents of the folder: readdir func
-//fs.readdir(path[, options], callback)
+//2.fs.readdir(path[, options], callback)-read the contents of  dir
 // option { withFileTypes: true } - if obj file
 // callback (err, files)
 fs.readdir(pathToSecretFolder, { withFileTypes: true }, (err, files) => {
