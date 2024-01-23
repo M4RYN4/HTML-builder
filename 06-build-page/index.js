@@ -42,16 +42,17 @@ async function copyDirAssets(pathToFolderSourceAssets, pathToProjFolder) {
   }
 }
 
-//3.     from task 5. Combine CSS files to one ->& move to folder:
+//3. from task 5. Combine CSS files to one ->& move to folder:
 async function combineCSS() {
+  try {
     const pathToFolderSourceCSS = path.join(__dirname, 'styles');
     const pathToDestCSS = path.join(__dirname, 'project-dist', 'style.css');
-      try {
-      const files = await fsPromises.readdir(pathToFolderSourceCSS, { withFileTypes: true });
-      //fs.createWriteStream(path[, options])->make a writable stream for writing data to a file
-      const ws = fs.createWriteStream(pathToDestCSS);
 
-      files.forEach((item) => {
+    const files = await fsPromises.readdir(pathToFolderSourceCSS, { withFileTypes: true });
+    //fs.createWriteStream(path[, options])->make a writable stream for writing data to a file
+    const ws = fs.createWriteStream(pathToDestCSS);
+
+    files.forEach((item) => {
           //object is a file:
           if (item.isFile()) {
               //path.join([...paths])->(pathToSecretFolder + name of file (Dirent name))
@@ -76,25 +77,34 @@ async function combineHTML() {
     const pathToSourceTemplateFile = path.join(__dirname, 'template.html');
     const pathToSourceComponentsFolder = path.join(__dirname, 'components');
     const pathToDestHTMLFile = path.join(__dirname, 'project-dist', 'index.html');
-    //2.1
-    await copyHTMLFile(pathToSourceTemplateFile, pathToDestHTMLFile);
+      try {
+        //2.1
+        await copyHTMLFile(pathToSourceTemplateFile, pathToDestHTMLFile);
 
-    let HTMLfile = await fsPromises.readFile(pathToDestHTMLFile, 'utf-8');
-    //fs.readdir(path[, options], callback)-read the contents of  dir
-    // option { withFileTypes: true } - if obj file -option 'utf-8' is must!!
-    const componentsUnreadable = await fsPromises.readdir(pathToSourceComponentsFolder, { withFileTypes: true});
-  //call on 2.2 -1 components HTML-done
-    const HTMLfinal = await removeUnreadableFromHTML(HTMLfile, componentsUnreadable, pathToSourceComponentsFolder);
-    // fs.writeFile(file-desc, data[, options], callback)-> to write data to a file
-    await fsPromises.writeFile(pathToDestHTMLFile, HTMLfinal);
+        let HTMLfile = await fsPromises.readFile(pathToDestHTMLFile, 'utf-8');
+        //fs.readdir(path[, options], callback)-read the contents of  dir
+        // option { withFileTypes: true } - if obj file -option 'utf-8' is must!!
+        const componentsUnreadable = await fsPromises.readdir(pathToSourceComponentsFolder, { withFileTypes: true});
+      //call on 2.2 -1 components HTML-done
+        const HTMLfinal = await removeUnreadableFromHTML(HTMLfile, componentsUnreadable, pathToSourceComponentsFolder);
+        // fs.writeFile(file-desc, data[, options], callback)-> to write data to a file
+        await fsPromises.writeFile(pathToDestHTMLFile, HTMLfinal);
+
+      } catch (error) {
+        console.log(`HTML files could not be combined: ${error}`);
+      }
 }
 
   //2.1
   async function copyHTMLFile(srcPath, destPath) {
+    try {
     //fs.readdir(path[, options], callback)-read the contents of  dir
     const content = await fsPromises.readFile(srcPath);
     // fs.writeFile(file, data[, options], callback)-> to write data to a file
     await fsPromises.writeFile(destPath, content);
+    } catch (error) {
+      console.log(`HTML file could not be copied: ${error}`);
+    }
   }
   //2.2
   async function removeUnreadableFromHTML(HTMLfile, files, pathDir) {
@@ -108,7 +118,6 @@ async function combineHTML() {
 
         HTMLfile = HTMLfile.replace(`{{${fileName}}}`, srcData);
       }
-
     }
     return HTMLfile;
   }
