@@ -16,7 +16,8 @@ fs.readdir(pathToSecretFolder, { withFileTypes: true }, (err, files) => {
         const filePath = path.join(pathToSecretFolder, item.name);
         //path.extname('.index.md');//->.md->remove 1st .
         const fileExt = path.extname(filePath).slice(1);
-        const fileName = path.parse(pathToSecretFolder).name;
+        // console.log(item.name);//data.csv ->
+        const fileName = item.name.replace(`.${fileExt}`, '');
         displayFileData(fileName, fileExt, filePath);
       }
     });
@@ -29,8 +30,12 @@ const displayFileData = (fileName, fileExt, filePath) => {
     if (err) {
         console.log(err);
     }
+    //!!!!32.7 KB (33,517 bytes)- actual size of data.csv -> checked file
+    //`<file name>-<file extension>-<file size>`
+    //`example - txt - 128.369kb`
+
     //.size in bytes-> kb = .size /1024: data - csv - 32.7314453125kb
-    //to round to .000 -> .size /1000: data - csv - 32.517kb
-    console.log(`${fileName} - ${fileExt} - ${files.size / 1000}kb`);
+    //(files.size / 1024).toFixed(3)->data - csv - 32.731kb
+    console.log(`${fileName} - ${fileExt} - ${(files.size / 1024).toFixed(3)}kb`);
   });
 }
