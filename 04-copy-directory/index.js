@@ -13,7 +13,8 @@ async function copyDir() {
   try {
     //fsPromises.rm(path[, options])-> to remove nested directories
     //recursive -> set to true->  to remove nested directories!!!
-    await fsPromises.rm(pathToDestFolder, { recursive: true });
+    //force-> true-> ignore exception if path does not exist. !!!
+    await fsPromises.rm(pathToDestFolder, { recursive: true, force: true });
     //2. fsPromises.mkdir(path[, options])-to create dir
     //path-path of dir to be created
     //options-{ recursive: true }-> as otherwise, error if dir already exists
